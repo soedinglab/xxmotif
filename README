@@ -1,0 +1,192 @@
+#[ ![Codeship Status for AnjaSophie/gimmemotif](https://codeship.com/projects/537b9f00-a0d2-0133-1498-46172c989b73/status?branch=master)](https://codeship.com/projects/128271)
+
+#"!https://codeship.com/projects/537b9f00-a0d2-0133-1498-46172c989b73/status?branch=master!":https://codeship.com/projects/128271
+
+#{<img src="https://codeship.com/projects/537b9f00-a0d2-0133-1498-46172c989b73/status?branch=master" alt="Status?branch=master" />}[https://codeship.com/projects/128271]
+
+================================================
+== How to Use GIMMEmotif from the command line ? ==
+================================================
+
+The easiest way to use XXmotif is by the XXmotif web server (http://xxmotif.genzentrum.lmu.de)
+From the command line, XXmotif can be used as follows:
+
+Usage: XXmotif OUTDIR SEQFILE [options] 
+
+	OUTDIR:  output directory for all results
+	SEQFILE: file name with sequences from positive set
+
+Options:
+
+	--XXmasker        				mask the input sequences for homology, repeats and low complexity regions
+	--XXmasker-pos    				mask only the positive set for homology, repeats and low complexity regions
+
+	--no-graphics     				run XXmotif without graphical output
+	-h|--help         				show this output
+
+	--negSet <FILE>					sequence set which has to be used as a reference set
+	--mops				  				use multiple occurrence per sequence model
+	--revcomp			  				search in reverse complement of sequences as well (DEFAULT: NO)
+	--background-model-order <NUMBER>			order of background distribution (DEFAULT: 2, 8(--negset) )
+
+	--pseudo <NUMBER>					percentage of pseudocounts used (DEFAULT: 10)
+	-g|--gaps <NUMBER>				maximum number of gaps used for start seeds [0-3] (DEFAULT: 0)
+	--type <TYPE>						defines what kind of start seeds are used (DEFAULT: ALL)
+											 - possible types: ALL,FIVEMERS,PALINDROME,TANDEM,NOPALINDROME,NOTANDEM
+	 --merge-motif-threshold <MODE>	defines the similarity threshold for merging motifs (DEFAULT: HIGH)
+						 					 - possible modes: LOW, MEDIUM, HIGH
+
+	--batch								suppress progress bars (reduce output size for batch jobs)
+	--maxPosSetSize <NUMBER>		maximum number of sequences from the positive set used [DEFAULT: all]
+	--trackedMotif <SEED>			inspect extensions and refinement of a given seed (DEFAULT: not used)
+				( a possible fivemer SEED for the TATA-Box is: TATAW
+				  a possible palindromic gapped sixmer SEED for GAL4 is: CGG...........CCG )
+
+==================
+= Options to include conservation information
+==================
+	--format FASTA|MFASTA			defines what kind of format the input sequences have (DEFAULT: FASTA)
+	--maxMultipleSequences <NUMBER>		maximum number of sequences used in an alignment [DEFAULT: all]
+
+==================
+== Options to include localization information
+==================
+	--localization						use localization information to calculate combined P-values 
+						(sequences should have all the same length)
+	--downstream <NUMBER>			number of residues in positive set downstream of anchor point (DEFAULT: 0)
+
+==================
+== Jump start XXmotif with self-defined motif (skip elongation phase)
+==================
+	-m|--startMotif <MOTIF>		Start motif (IUPAC characters)
+			E.g.: -m "TATAWAWR" to jump start XXmotif with a TATA-Box
+
+	-p|--profileFile <FILE>		profile file
+			every column corresponds to one motif position. Every line to A,C,G,T, respectively
+			E.g To jump start with a TATA-Box PWM the profile File should contain:
+
+			0.0  1.0  0.0  1.0  0.5  1.0  0.5  0.5
+			0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+			0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.5
+			1.0  0.0  1.0  0.0  0.5  0.0  0.5  0.0
+				
+	--startRegion <NUMBER>		expected start position for motif occurrences relative to anchor point (--localization)
+	--endRegion <NUMBER>			expected end position for motif occurrences relative to anchor point (--localization)
+
+
+
+====================================================================================================================================
+====================================================================================================================================
+
+
+===================================
+== Which Output files do exist ? ==
+===================================
+
+1.) *_MotifFile.txt: Summary of the motif results
+	
+	It contains a representation of the found motifs without degenerate nucleotides (Line 1) and including degerenate 
+	nucleotides (Line 4). Line 3 contains the motif significance and information about the motif occurrence.
+	If zoops or oops model is used, the percentage of sequences with motifs is given, if the mops model is used
+	only the number of binding sites is given.
+	If the option "--localization" is used Line 5 gives information about the enriched region (startRegion, endRegion) and
+	the position with highest motif occurrence (mode) with respect to the	anchor point.	
+
+	1: 	----Motif Number 1: ----																						
+	2: 	=> C/G/T A/T A T C A/C/G G C/G C/G/T C/G/T C/T C A T C C G/T
+	3:	E-Value: 2.48e-27,	occ: 20.00 % (13 of 65 sequences)				
+	4:	IUPAC: B W A T C V G S B B Y C A T C C K 									
+	5:	mode: 57, startRegion: 42	 endRegion: 76
+  6:
+	7: ----Motif Number 2: ----
+	8: ...
+
+2.) *_Pvals.txt : Summary of the Pvalues for each motif site
+	After header information (Line 1 - 3) all sites for all motifs are given including the upstream and downstream sequences. 
+	Star positions are with respect to the sequence start. More information about the sequence with the specified Sequence Number 
+	(seq nb) can be found in file *_sequence.txt
+
+
+	1: ########################################################################################################################
+	2: ###        upstrem site	                site	     downstream site	    seq nb	 start pos	    strand	 site Pval  ###
+	3: ########################################################################################################################
+  4: 
+	5: Motif 1: B W A T C V G S B B Y C A T C C K 	E-Value: 2.48e-27
+  6:    GGGTGAAGGGAGGTTGAGCT	   CAATCAGGCCCCATCCT	       GCTTCACAGCCTA	         2	       372	         +	3.2566e-05
+  7:    GTTTCTGTGGCGTTCGAGTT	   CCATCGGCTCCCATCCG	GGCTATCCTGCCGCCTTAGC	         5	       363	         +	4.2578e-05
+  8:    CCCTGTCTTTATTTCCTTAC	   CAATCGGCTGCCATCCG	 AGGAGCTGAGGAAGCCTAG	         8	       366	         +	6.3485e-07
+  9:    ATTCGGCGGGCAAGCGGGTG	   TAATCAGCAGCCATCCG	TTCTTGGGCATGGTGGCTTC	        12	       364	         +	1.3936e-05
+  10:...
+
+3.) *_sequence.txt
+	After header information (Line 1 - 3) Sequence Numbers (seq nb), sequencence length and the header information given in the 
+	input files are given
+
+	1:	#####################################################################
+	2:	### seq nb	 seq length	      				 								 seq header ###
+	3:	#####################################################################
+  4: 
+  5:    			 1					401		EP73002 (+) Hs RPL7   range -300 to 100.
+  6:    			 2					401		EP73003 (+) Hs RPS8   range -300 to 100.
+  7:    			 3					401		EP73015 (+) Hs RPS11  range -300 to 100.
+ 
+4.) *.pwm
+	All position weight matrices of the detected motifs are given. Line 1 contains an IUPAC representation of the motif with its E-value.
+	Lines 2-5 contain the PWM. Every column corresponds to one position. Every line to A, C, G, T, respectively
+		
+	1:	Motif 1: B W A T C V G S B B Y C A T C C K 	E-Value: 2.48e-27
+	2:	0.01791	0.57735	0.92700	0.01791	0.01791	0.15777	0.01791	0.01791	0.08784	0.01791	0.08784	0.01791	0.92700	0.01791	0.01791	0.01791	0.01791	
+	3:	0.44610	0.09645	0.02652	0.02652	0.93561	0.58596	0.02652	0.72582	0.37617	0.16638	0.72582	0.93561	0.02652	0.02652	0.93561	0.93561	0.02652	
+	4:	0.37579	0.02614	0.02614	0.02614	0.02614	0.23593	0.93524	0.23593	0.16600	0.51565	0.02614	0.02614	0.02614	0.02614	0.02614	0.02614	0.65552	
+	5:	0.16020	0.30006	0.02034	0.92944	0.02034	0.02034	0.02034	0.02034	0.36999	0.30006	0.16020	0.02034	0.02034	0.92944	0.02034	0.02034	0.30006	
+
+5.) *_hf.fasta
+	If the option "--XXmasker") is used, input sequences are masked for homology, repeats, and low-complexity regions. The output of
+	XXmasker is stored into this file and subsequently used by XXmotif as input.
+
+6.) *.png
+	Graphical output of the motif search. It is created if the option (--no-graphics) is not selected and is designed especially for 
+	localized motifs. 
+
+	Every plot contains the occurrence of the motif ( binding sites / number of sequences), which can be greater than 100% in case of
+	the "multiple occurrence per sequence model" (--mops).
+	If the option localization is used (--localization) the position with most motif occurrences is given (max).
+
+	The upper part of the plot contains the PWM logo, and the distribution of binding sites selected by XXmotif.
+	If localization is used, a red bar indicates the region of highest motif enrichment. If no red bar is present, no region contains significantly
+	enriched motifs.
+
+	The lower part of the plot shows the distribution of binding sites with a minimum log-odds score on the forward strand (red) and 
+	on the backward strand (blue).
+	All binding sites are counted that have log-odds score > 50% of the highest possible log-odds score of the PWM. This plot is useful to
+	reveal whether the motif is strand specific. Moreover, in case of localized motifs, it is useful to analyze whether there are binding sites
+	outside the enriched region that are not selected by XXmotif.
+
+	The axis at the bottom shows the position of the binding site within the input sequence. If the option "--localization" is selected
+	it is assumed that the "--downstream" option is used to define the number of nucleotides downstream of the anchor point. If "--downstream" is
+	not used, it is set to 0. If the motif search is performed on both strands (--revcomp) the reverse strand is simply added after the
+	forward strand. Hence, the sequences seem to be twice as long.
+
+
+=====================
+== Version Track
+=====================
+
+Version 1.6:
+  - fixed bug reported by Zhihao Ling concerning parameter --max-match-positions
+
+Version 1.5:
+  - improved speed to read in large input sets (> 10.000 sequences)
+
+Version 1.4:
+  - report motifs with e-value < 1e2 (before: < 1e3)
+
+Version 1.3:
+  - removed a bug leading to a segmentation fault when using sequences longer than 16.000 nucleotides
+  - removed a bug leading to wrongly counted initial seed kmers when using the option --gaps > 0 and for the tandemic seed kmers
+  - added the option --max-motif-length to allow motifs to be found with length > 17 (larger values than 17 will lead to very long runtimes, maximum possible length is 26)
+  - added the option --no-pwm-length-optimization to remove the time consuming pwm length optimiziation step in the iterative pwm phase
+
+Version 1.2:
+  - Version used in the publication
+

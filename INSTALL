@@ -1,0 +1,28 @@
+==============================================
+== Installation Instructions
+==============================================
+
+to Compile the program go into folder Release and type :
+	make clean
+	make -j
+
+=================
+== Dependencies
+=================
+
+For graphical output:
+ - R + grid package => install it
+
+For XXmasker:
+- formatdb, blast => install blast2
+
+
+================================================
+== FAQ:
+================================================
+
+1.) compilation error stl_list.h:
+
+	 probably you are using g++ version 4.2, which has a bug in allocator.h:
+		
+			install libstdc++6-4.X-dev, X > 2

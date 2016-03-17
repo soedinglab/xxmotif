@@ -1,0 +1,19 @@
+package:
+  name: gimmemotif
+  version: 0.1.1
+
+source:
+  git_url: git@bitbucket.org:AnjaSophie/gimmemotif.git
+  git_rev: 2a123a58a4
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - cmake
+    - gcc
+    - libgcc
+
+  run:
+    - libgcc
