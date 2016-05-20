@@ -1,10 +1,10 @@
 package:
-  name: gimmemotif
-  version: 0.1.1
+  name: xxmotif
+  version: 1.6
 
 source:
-  git_url: git@bitbucket.org:AnjaSophie/gimmemotif.git
-  git_rev: 2a123a58a4
+  git_url: git@bitbucket.org:croth1/xxmotif.git
+  git_rev: 1c27efe0341d4
 
 build:
   number: 0
@@ -17,3 +17,7 @@ requirements:
 
   run:
     - libgcc
+
+test:
+  commands:
+    - test -f ${PREFIX}/bin/XXmotif
